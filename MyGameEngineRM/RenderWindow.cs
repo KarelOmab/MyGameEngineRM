@@ -77,38 +77,10 @@ namespace MyGameEngineRM
                 //draw objects (background)
                 foreach (GameObject o in objects)
                 {
-                    if (o.GetType() == typeof(GameText))
-                    {
-                        GameText gameText = o as GameText;
-                        if (gameText.BrushBg != null)
-                        {
-                            if (gameText.Shape == GameObject.ObjectShape.Rectangle)
-                                g.FillRectangle(gameText.BrushBg, gameText.RectF);
-                            else if (gameText.Shape == GameObject.ObjectShape.Ellipse)
-                                g.FillEllipse(gameText.BrushBg, gameText.RectF);
-                        }
+                    DrawGameObjects(g, o);
 
-
-                        // Set format of string.
-                        StringFormat drawFormat = new StringFormat();
-                        drawFormat.Alignment = StringAlignment.Center;
-
-                        g.DrawString(gameText.Text, gameText.Font, gameText.BrushFg, gameText.RectF, drawFormat);
-
-                    }
-                    else if (o.Texture != null)
-                    {
-                        if (o.Shape == GameObject.ObjectShape.Hexagon)
-                            o.DrawImageInPolygon(g, o.Points, o.Texture);
-                        else if (o.Shape == GameObject.ObjectShape.Rectangle)
-                        {
-                            if (o.RotAngle == 0)
-                                g.DrawImage(o.Texture, o.RectF);
-                            else g.DrawImage(o.TextureRot, o.RectF);
-                        }
-                            
-                    }
-                    else g.FillRectangle(o.BrushBg, o.RectF);
+                    foreach (GameObject c in o.ObjectChildren)
+                        DrawGameObjects(g, c);
                 }
 
                 //draw highlights (foreground)
@@ -159,6 +131,41 @@ namespace MyGameEngineRM
             Screen.Image = ScreenBuffer;   //draw the backbuffer to the screen
         }
 
+        private static void DrawGameObjects(Graphics g, GameObject o)
+        {
+            if (o.GetType() == typeof(GameText))
+            {
+                GameText gameText = o as GameText;
+                if (gameText.BrushBg != null)
+                {
+                    if (gameText.Shape == GameObject.ObjectShape.Rectangle)
+                        g.FillRectangle(gameText.BrushBg, gameText.RectF);
+                    else if (gameText.Shape == GameObject.ObjectShape.Ellipse)
+                        g.FillEllipse(gameText.BrushBg, gameText.RectF);
+                }
+
+
+                // Set format of string.
+                StringFormat drawFormat = new StringFormat();
+                drawFormat.Alignment = StringAlignment.Center;
+
+                g.DrawString(gameText.Text, gameText.Font, gameText.BrushFg, gameText.RectF, drawFormat);
+
+            }
+            else if (o.Texture != null)
+            {
+                if (o.Shape == GameObject.ObjectShape.Hexagon)
+                    o.DrawImageInPolygon(g, o.Points, o.Texture);
+                else if (o.Shape == GameObject.ObjectShape.Rectangle)
+                {
+                    if (o.RotAngle == 0)
+                        g.DrawImage(o.Texture, o.RectF);
+                    else g.DrawImage(o.TextureRot, o.RectF);
+                }
+
+            }
+            else g.FillRectangle(o.BrushBg, o.RectF);
+        }
 
 
         public void SetScreenSize(ScreenSize screenSize)

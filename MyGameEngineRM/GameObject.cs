@@ -76,7 +76,10 @@ namespace MyGameEngineRM
             }
             else if (Shape == ObjectShape.Ellipse)
             {
-                //todo
+                Points[0] = new PointF(RectF.Left, RectF.Top);
+                Points[1] = new PointF(RectF.Right, RectF.Top);
+                Points[2] = new PointF(RectF.Left, RectF.Bottom);
+                Points[3] = new PointF(RectF.Right, RectF.Bottom);
             }
             else if (Shape == ObjectShape.Hexagon)
             {

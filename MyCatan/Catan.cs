@@ -260,16 +260,15 @@ namespace MyCatan
                         t.Value = tileValue;
 
                         //refactor below to object children
-                        tVal = new GameText(renderWindow, t.Value, POS_X, POS_Y, t.BrushBg, t.BrushFg, GameObject.ObjectShape.Ellipse);
-                        tVal.RectF = new RectangleF(POS_X - (tVal.RectF.Width / 2), POS_Y - (tVal.RectF.Height / 2), tVal.RectF.Width, tVal.RectF.Height);
+                        tVal = new GameText(renderWindow, t.Value, POS_X - 32, POS_Y - 32, 64, 64, t.BrushBg, t.BrushFg, GameObject.ObjectShape.Ellipse);
                         tVal.Z = 3;
 
                         if (t.Value == "6" || t.Value == "8")
                             tVal.BrushFg = new SolidBrush(Color.FromArgb(255, 255, 0, 0));
 
-
+                        t.ObjectChildren.Add(tVal);
+                        
                         listObjects.Add(t); //tile
-                        listObjects.Add(tVal);  //tileValue 
 
                     }
                     else listObjects.Add(t);
