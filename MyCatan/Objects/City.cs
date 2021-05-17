@@ -9,9 +9,9 @@ namespace MyCatan.Objects
 {
     public class City : MyGameEngineRM.GameObject
     {
-        public City(string name, float x, float y)
+        public City(string team, float x, float y)
         {
-            Name = name;
+            Team = team;
             Z = 5;
             X = x;
             Y = y;

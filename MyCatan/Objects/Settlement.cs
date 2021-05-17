@@ -10,9 +10,9 @@ namespace MyCatan.Objects
     public class Settlement : MyGameEngineRM.GameObject
     {
 
-        public Settlement(string name, float x, float y)
+        public Settlement(string team, float x, float y)
         {
-            Name = name;
+            Team = team;
             Z = 5;
             X = x;
             Y = y;

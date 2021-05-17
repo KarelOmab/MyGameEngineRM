@@ -17,6 +17,8 @@ namespace MyCatan
         List<GameObject> listObjects = new List<GameObject>();
         List<GameObject> listObjectsDrag = new List<GameObject>();
 
+
+
         public Catan(RenderWindow rWindow)
         {
             renderWindow = rWindow;
@@ -68,23 +70,14 @@ namespace MyCatan
                 }
 
                 if (isValid)
-                {
-                    
-                    
-                    
                     listObjects.Add(newObject);
-                    listObjectsDrag.Clear();
-                    BuildableCirclesClear();
-
-                    foreach (GameObject go in listObjects)
-                        go.IsDragging = false;
-                }
                 
+                listObjectsDrag.Clear();
+                BuildableCirclesClear();
 
+                foreach (GameObject go in listObjects.FindAll(x => x.IsDragging))
+                    go.IsDragging = false;
                 
-
-                
-
                 return;
 
 
@@ -265,6 +258,8 @@ namespace MyCatan
                     {
 
                         t.Value = tileValue;
+
+                        //refactor below to object children
                         tVal = new GameText(renderWindow, t.Value, POS_X, POS_Y, t.BrushBg, t.BrushFg, GameObject.ObjectShape.Ellipse);
                         tVal.RectF = new RectangleF(POS_X - (tVal.RectF.Width / 2), POS_Y - (tVal.RectF.Height / 2), tVal.RectF.Width, tVal.RectF.Height);
                         tVal.Z = 3;
@@ -310,19 +305,18 @@ namespace MyCatan
             {
                 foreach (PointF p in go.Points)
                 {
-                    Circle new_vertex = new Circle(p.X - ((go.Radius / 4) / 2), p.Y - ((go.Radius / 4) / 2), go.Radius / 4, go.Radius / 4);
+                    Circle newVertex = new Circle(p.X - ((go.Radius / 4) / 2), p.Y - ((go.Radius / 4) / 2), go.Radius / 4, go.Radius / 4);
 
                     bool isColl = false;
 
                     foreach (Circle v in listHighlights)
                     {
-                        if (v.RectF.IntersectsWith(new_vertex.RectF))
+                        if (v.RectF.IntersectsWith(newVertex.RectF))
                         {
                             isColl = true;
                             break;
                         }
                     }
-
 
                     if (!isColl || listHighlights.Count == 0)
                     {
@@ -333,7 +327,7 @@ namespace MyCatan
 
                         foreach (GameObject b in listBuildings)
                         {
-                            if (b.RectF.IntersectsWith(new_vertex.RectF))
+                            if (b.RectF.IntersectsWith(newVertex.RectF))
                             {
                                 isColl = true;
                                 break;
@@ -341,8 +335,32 @@ namespace MyCatan
                         }
 
                         if (!isColl)
-                            listHighlights.Add(new_vertex);
+                        {
+                            bool isAdj = false;
+
+                            //ensure adjacency
+                            foreach (GameObject existBuilding in listBuildings)
+                            {
+                                //find distance
+                                double d = Math.Sqrt((Math.Pow(newVertex.X - existBuilding.X, 2) + Math.Pow(newVertex.Y - existBuilding.Y, 2)));
+
+                                if (d <= go.Radius + newVertex.Width)
+                                {
+                                    isAdj = true;
+                                    break;
+                                }
+                            }
+
+
+
+                            if (!isAdj)
+                                listHighlights.Add(newVertex);
+                        }
+                            
+
+                        
                     }
+
                         
 
                 }
@@ -353,15 +371,15 @@ namespace MyCatan
 
         private void BuildablesRoadsShow()
         {
-            //create highlights for buildable points (white circles)
+            //create highlights for buildable roads (white circles)
             List<GameObject> listHighlights = new List<GameObject>();
-            List<GameObject> listTerrains = new List<GameObject>();
+
+            List<GameObject> listTerrains = new List<GameObject>();  
             listTerrains.AddRange(listObjects.FindAll(t => t.GetType() == typeof(Lumber)));
             listTerrains.AddRange(listObjects.FindAll(t => t.GetType() == typeof(Brick)));
             listTerrains.AddRange(listObjects.FindAll(t => t.GetType() == typeof(Ore)));
             listTerrains.AddRange(listObjects.FindAll(t => t.GetType() == typeof(Wool)));
             listTerrains.AddRange(listObjects.FindAll(t => t.GetType() == typeof(Grain)));
-
 
             foreach (GameObject go in listTerrains)
             {
@@ -385,13 +403,14 @@ namespace MyCatan
                     
                     PointF m = new PointF((a.X + b.X) / 2, ((a.Y + b.Y) / 2));  //find the middle point between two points
 
-                    Circle new_vertex = new Circle(m.X - ((go.Radius / 4) / 2), m.Y - ((go.Radius / 4) / 2), go.Radius / 4, go.Radius / 4);
+                    Circle newVertex = new Circle(m.X - ((go.Radius / 4) / 2), m.Y - ((go.Radius / 4) / 2), go.Radius / 4, go.Radius / 4);
 
+                    //ensure unique highlight creation
                     bool isColl = false;
 
                     foreach (Circle v in listHighlights)
                     {
-                        if (v.RectF.IntersectsWith(new_vertex.RectF))
+                        if (v.RectF.IntersectsWith(newVertex.RectF))
                         {
                             isColl = true;
                             break;
@@ -401,12 +420,14 @@ namespace MyCatan
 
                     if (!isColl || listHighlights.Count == 0)
                     {
-                        //lets also verify that there are no other roads
-                        List<GameObject> listRoads = listObjects.FindAll(x => x.GetType() == typeof(Road));
 
-                        foreach (GameObject r in listRoads)
+                        List<GameObject> listBuildings = new List<GameObject>();
+                        listBuildings.AddRange(listObjects.FindAll(t => t.GetType() == typeof(Road)));
+
+                        foreach (GameObject r in listBuildings)
                         {
-                            if (r.RectF.IntersectsWith(new_vertex.RectF))
+                            //collision with another (existing) road
+                            if (r.RectF.IntersectsWith(newVertex.RectF))
                             {
                                 isColl = true;
                                 break;
@@ -415,11 +436,33 @@ namespace MyCatan
 
                         if (!isColl)
                         {
-                            float xDiff = b.X - a.X;
-                            float yDiff = b.Y - a.Y;
-                            double angle = Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
-                            new_vertex.RotAngle = angle;
-                            listHighlights.Add(new_vertex);
+                            //finally lets also verify that that the point is adjacent to player owned object
+                            listBuildings.AddRange(listObjects.FindAll(t => t.GetType() == typeof(Settlement) && t.Team == "Red"));
+                            listBuildings.AddRange(listObjects.FindAll(t => t.GetType() == typeof(City) && t.Team == "Red"));
+
+                            bool isAdj = false;
+
+                            //ensure adjacency
+                            foreach (GameObject existBuilding in listBuildings)
+                            {
+                                //find distance
+                                double d = Math.Sqrt((Math.Pow(newVertex.X - existBuilding.X, 2) + Math.Pow(newVertex.Y - existBuilding.Y, 2)));
+
+                                if (d <= go.Radius + (newVertex.Width / 2))
+                                {
+                                    isAdj = true;
+                                    break;
+                                }
+                            }
+
+                            if (isAdj)
+                            {
+                                float xDiff = b.X - a.X;
+                                float yDiff = b.Y - a.Y;
+                                double angle = Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
+                                newVertex.RotAngle = angle;
+                                listHighlights.Add(newVertex);
+                            }   
                         }
                             
                     }
@@ -445,9 +488,9 @@ namespace MyCatan
         private void PanelBoardPieces()
         {
             List<GameObject> pieces = new List<GameObject>();
-            listObjects.Add(new Settlement("Settlement", 5, 10));
-            listObjects.Add(new City("City", 35, 10));
-            listObjects.Add(new Road("Road", 65, 10));
+            listObjects.Add(new Settlement("Red", 5, 10));
+            listObjects.Add(new City("Red", 35, 10));
+            listObjects.Add(new Road("Red", 65, 10));
 
 
         }

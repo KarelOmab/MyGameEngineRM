@@ -20,6 +20,7 @@ namespace MyGameEngineRM
         }
 
         public List<GameObject> ObjectChildren = new List<GameObject>();
+        public string Team { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public float Width { get; set; }
