@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyGameEngineRM", "MyGameEngineRM.csproj", "{5B93ADB3-B608-45FC-87E0-C16936E6F326}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCatan", "..\MyCatan\MyCatan.csproj", "{7163D537-5E27-447C-ABCB-D14A3ACE35B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B93ADB3-B608-45FC-87E0-C16936E6F326}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B93ADB3-B608-45FC-87E0-C16936E6F326}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B93ADB3-B608-45FC-87E0-C16936E6F326}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B93ADB3-B608-45FC-87E0-C16936E6F326}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7163D537-5E27-447C-ABCB-D14A3ACE35B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7163D537-5E27-447C-ABCB-D14A3ACE35B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7163D537-5E27-447C-ABCB-D14A3ACE35B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7163D537-5E27-447C-ABCB-D14A3ACE35B3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B09B3DF0-D151-480A-882B-C00550C3C870}
+	EndGlobalSection
+EndGlobal
